@@ -1,0 +1,33 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+contract Blockchain {
+    struct Block {
+        uint256 blockNumber;
+        bytes32 blockHash;
+        bool mined;
+    }
+
+    Block[] public blocks;
+
+    function createBlock(uint256 _blockNumber, bytes32 _blockHash) public {
+        blocks.push(Block(_blockNumber, _blockHash, false));
+    }
+
+    function verifyTransaction(uint256 _index) public view returns (bool) {
+        require(_index < blocks.length, "Block index out of bounds");
+        // TODO: implement zero-knowledge proof for transaction verification
+        return true;
+    }
+
+    function mineBlock(uint256 _index) public {
+        require(_index < blocks.length, "Block index out of bounds");
+        require(blocks[_index].blockHash == blockhash(blocks[_index].blockNumber), "Block hash does not match current blockhash");
+        require(verifyTransaction(_index), "Transaction verification failed");
+        blocks[_index].mined = true;
+    }
+function viewUser(uint256 _index) public view returns (uint256, bytes32, bool) {
+        require(_index < blocks.length, "Block index out of bounds");
+        return (blocks[_index].blockNumber, blocks[_index].blockHash, blocks[_index].mined);
+    }
+}
